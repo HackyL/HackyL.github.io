@@ -323,7 +323,7 @@
       
         
           
-            <p>JavaSript连接数据库主要依赖于微软提供的ActiveXObject对象。正是由于这一点，JavaScript只能在连微软家的数据库(Access/SQL Server)，并且只能在Windows系统下用IE浏览器打开网页才有效。这里是<br>微软提供的<a href="https://msdn.microsoft.com/library/7sw4ddf8(v=vs.94" target="_blank" rel="noopener">ActiveXObject对象的文档<br>。</a>.aspx)<br>综上，本文将重点介绍JavaScript和SQL Server连接。在介绍实现之前，还要介绍ActiveX插件和ActiveX Data Objects(这两个是实现连接的关键)。</p>
+            <p>JavaSript连接数据库主要依赖于微软提供的ActiveXObject对象。正是由于这一点，JavaScript只能连接微软家的数据库(Access/SQL Server)，并且只能在Windows系统下用IE浏览器打开网页才有效。基于上述，本文将重点介绍JavaScript和SQL Server连接。在介绍实现之前，还要介绍ActiveX插件和ActiveX Data Objects(这两个是实现连接的关键)。<br>这里是微软提供的<a href="https://msdn.microsoft.com/library/7sw4ddf8(v=vs.94).aspx" target="_blank" rel="noopener">ActiveXObject对象的文档</a>。</p>
 <h4 id="ActiveX插件："><a href="#ActiveX插件：" class="headerlink" title="ActiveX插件："></a>ActiveX插件：</h4><p>ActiveX 是一个开放的集成平台，为开发人员、 用户和 Web生产商提供了一个快速而简便的在 Internet 和 Intranet 创建程序集成和内容的方法。 使用 ActiveX, 可轻松方便的在 Web页中插入 多媒体效果、 交互式对象、以及复杂程序，创建用户体验相当的高质量多媒体CD-ROM 。<br>值得一提的是，微软家提供的ActiveX插件固然强大，但是在安全性方面差强人意。毕竟这一插件提供了大量WinAPI，网页开发人员可以很轻易地通过网页来获取用户本地数据。正是基于这一点，IE浏览器在安全性方面对ActiveX插件有者严格的限制，这对于我们的连接也增加了些许困难。但是问题不大，我们只需要在运行JS代码前对IE的安全设置稍作调整即可。<br>首先，我们要先打开IE浏览器的Internet选项-&gt;安全-&gt;受信任的站点-&gt;站点，把将要运行的网页添加到“受信任的站点”中，再把该区域的安全级别调节至低即可。</p>
 <figure class="half"><br>    <img src="http://p0843eixg.bkt.clouddn.com/21.png"><br>    <img src="http://p0843eixg.bkt.clouddn.com/23.png"><br></figure>
 
