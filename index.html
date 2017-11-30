@@ -252,6 +252,146 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="hacky.online/2017/11/30/JavaScript连接本地数据库/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hacky">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="HackyのBlog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/30/JavaScript连接本地数据库/" itemprop="url">JavaScript连接本地数据库</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-30T18:08:26+08:00">
+                2017-11-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>JavaSript连接数据库主要依赖于微软提供的ActiveXObject对象。正是由于这一点，JavaScript只能在连微软家的数据库(Access/SQL Server)，并且只能在Windows系统下用IE浏览器打开网页才有效。这里是<br>微软提供的<a href="https://msdn.microsoft.com/library/7sw4ddf8(v=vs.94" target="_blank" rel="noopener">ActiveXObject对象的文档<br>。</a>.aspx)<br>综上，本文将重点介绍JavaScript和SQL Server连接。在介绍实现之前，还要介绍ActiveX插件和ActiveX Data Objects(这两个是实现连接的关键)。</p>
+<h4 id="ActiveX插件："><a href="#ActiveX插件：" class="headerlink" title="ActiveX插件："></a>ActiveX插件：</h4><p>ActiveX 是一个开放的集成平台，为开发人员、 用户和 Web生产商提供了一个快速而简便的在 Internet 和 Intranet 创建程序集成和内容的方法。 使用 ActiveX, 可轻松方便的在 Web页中插入 多媒体效果、 交互式对象、以及复杂程序，创建用户体验相当的高质量多媒体CD-ROM 。<br>值得一提的是，微软家提供的ActiveX插件固然强大，但是在安全性方面差强人意。毕竟这一插件提供了大量WinAPI，网页开发人员可以很轻易地通过网页来获取用户本地数据。正是基于这一点，IE浏览器在安全性方面对ActiveX插件有者严格的限制，这对于我们的连接也增加了些许困难。但是问题不大，我们只需要在运行JS代码前对IE的安全设置稍作调整即可。<br>首先，我们要先打开IE浏览器的Internet选项-&gt;安全-&gt;受信任的站点-&gt;站点，把将要运行的网页添加到“受信任的站点”中，再把该区域的安全级别调节至低即可。</p>
+<figure class="half"><br>    <img src="http://p0843eixg.bkt.clouddn.com/21.png"><br>    <img src="http://p0843eixg.bkt.clouddn.com/23.png"><br></figure>
+
+<h4 id="ADO-ActiveX-Data-Objects-："><a href="#ADO-ActiveX-Data-Objects-：" class="headerlink" title="ADO(ActiveX Data Objects)："></a>ADO(ActiveX Data Objects)：</h4><p>ADO (ActiveX Data Objects，ActiveX数据对象）是微软提出的应用程序接口（API）用以实现访问关系或非关系数据库中的数据。例如，如果您希望编写应用程序从数据库中向网页提供数据，可以将ADO程序包括在作为活动服务器页（ASP）的HTML文件中。当用户从网站请求网页时，返回的网页也包括了数据中的相应数据，这些是由于使用了ADO代码的结果。</p>
+<h4 id="实现方式："><a href="#实现方式：" class="headerlink" title="实现方式："></a>实现方式：</h4><h6 id="连接："><a href="#连接：" class="headerlink" title="连接："></a>连接：</h6><pre><code>var conn = new ActiveXObject(&quot;ADODB.Connection&quot;)
+conn.Open(&quot;Driver={SQL Server};SERVER=(local);UID=sa;PWD=123456;DATABASE=HYblood&quot;);
+Driver是数据库提供商(如果是SQL Server不变)，SERVER是服务器地址(如果是本地不变)，UID是用户名，PWD是密码，DATABASE是数据库名称。
+</code></pre><h6 id="查询："><a href="#查询：" class="headerlink" title="查询："></a>查询：</h6><pre><code>sql=&quot;select *** from ***&quot;;
+var rs = new ActiveXObject(&quot;ADODB.Recordset&quot;);
+rs.open(sql,conn);
+ADODB.Recordset常用方法：
+rs(i)：第i条数据，i为0至rs.Fields.Count-1
+rs.Fields.Count：返回Recordset数据项数。
+rs.EOF：是否最后一条记录。
+rs.MoveFirst：指向第一条记录。 
+rs.MoveLast：指向最后一条记录。 
+rs.MovePrev：指向上一条记录。 
+rs.MoveNext：指向下一条记录。
+rs.close()：关闭连接。
+</code></pre><h4 id="实现代码："><a href="#实现代码：" class="headerlink" title="实现代码："></a>实现代码：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">function Conn() &#123; </span><br><span class="line">    var conn = new ActiveXObject(&quot;ADODB.Connection&quot;); </span><br><span class="line">    conn.Open(&quot;Driver=&#123;SQL Server&#125;;SERVER=(local);UID=sa;PWD=123456;DATABASE=HYblood&quot;);</span><br><span class="line">    return conn;</span><br><span class="line">&#125; </span><br><span class="line">function Query() &#123; </span><br><span class="line">sql=&quot;select * from [user]&quot;;</span><br><span class="line">var conn=Conn(); </span><br><span class="line">    try &#123; </span><br><span class="line">        var rs = new ActiveXObject(&quot;ADODB.Recordset&quot;);</span><br><span class="line">        rs.open(sql,conn);</span><br><span class="line">        while(!rs.EOF) &#123;</span><br><span class="line">            alert(rs(1));</span><br><span class="line">            rs.moveNext();</span><br><span class="line">    &#125;</span><br><span class="line">    &#125; catch (e) &#123;</span><br><span class="line">        alert(e.description);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        close();</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line">function close() &#123; </span><br><span class="line">    if(rs!=null) &#123;</span><br><span class="line">        rs.close();</span><br><span class="line">        rs=null;</span><br><span class="line">    &#125; </span><br><span class="line">    if(conn!=null) &#123;</span><br><span class="line">        conn.close();</span><br><span class="line">        conn=null;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="hacky.online/2017/11/26/CSS布局-导航栏和侧栏固定的布局/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -412,7 +552,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -425,7 +565,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">标签</span>
                 
               </div>
